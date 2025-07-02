@@ -21,7 +21,7 @@ class MainActivity : ComponentActivity() {
             XetiaBondhuTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Greeting(
-                        name = "Android",
+                        name = "This is an test app",
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
