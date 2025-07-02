@@ -15,7 +15,8 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun LoginScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onGoogleSignInClick: ()-> Unit
 ) {
     //for testing and working purposes, will need to change the look later
     Column(
@@ -30,7 +31,7 @@ fun LoginScreen(
         Spacer(Modifier.height(16.dp))
         Button(
             onClick = {
-                //todo logic
+                onGoogleSignInClick()
             }
         ) {
             Text("Continue with Google")
