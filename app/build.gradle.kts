@@ -6,6 +6,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization")
     id("kotlin-parcelize")
     id("com.google.dagger.hilt.android")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -85,4 +86,9 @@ dependencies {
 
     //splash screen
     implementation("androidx.core:core-splashscreen:1.0.1")
+
+    //firebase bom
+    implementation(platform("com.google.firebase:firebase-bom:33.16.0"))
+    //analytics
+    implementation("com.google.firebase:firebase-analytics")
 }
