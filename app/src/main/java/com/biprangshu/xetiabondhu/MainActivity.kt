@@ -11,6 +11,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
+import com.biprangshu.xetiabondhu.navigation.Navigation
 import com.biprangshu.xetiabondhu.ui.theme.XetiaBondhuTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -21,10 +23,12 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             XetiaBondhuTheme {
+
+                val navController = rememberNavController()
+
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "This is an test app 2",
-                        modifier = Modifier.padding(innerPadding)
+                    Navigation(
+                        navcontroller = navController
                     )
                 }
             }
