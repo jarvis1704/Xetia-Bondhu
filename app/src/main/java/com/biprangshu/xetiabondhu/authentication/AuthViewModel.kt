@@ -109,6 +109,19 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    fun signOut(){
+        viewModelScope.launch {
+            try {
+                auth.signOut()
+                _authState.value = AuthState.SignedOut
+                userPreferencesRepository.clearUserData()
+                userPreferencesRepository.setUserLoggedIn(false)
+            }catch (e: Exception){
+                Log.e("AuthViewModel", "Error in signing out")
+            }
+        }
+    }
+
 
     fun resetAuthState(){
         _authState.value = AuthState.Initial

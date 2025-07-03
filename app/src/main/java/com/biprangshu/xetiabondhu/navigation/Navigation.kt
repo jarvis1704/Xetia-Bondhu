@@ -77,7 +77,11 @@ fun Navigation(
         startDestination = NavigationScreens.LOADINGSCREEN
     ) {
         composable(NavigationScreens.HOMESCREEN) {
-            HomeScreen()
+            HomeScreen(
+                onSignoutClick = {
+                    authViewModel.signOut()
+                }
+            )
         }
 
         composable (NavigationScreens.LOGINSCREEN){
