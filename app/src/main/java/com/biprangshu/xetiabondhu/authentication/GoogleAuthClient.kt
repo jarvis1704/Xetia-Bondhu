@@ -49,7 +49,8 @@ class GoogleAuthClient(
                 data = user?.run {
                     UserData(
                         userId = uid,
-                        userName = displayName
+                        userName = displayName,
+                        userEmail = email
                     )
                 },
                 errorMessage = null

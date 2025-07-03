@@ -8,6 +8,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.biprangshu.xetiabondhu.datamodel.AuthState
 import com.biprangshu.xetiabondhu.datamodel.UpdateState
+import com.biprangshu.xetiabondhu.repository.FirebaseRepository
 import com.biprangshu.xetiabondhu.repository.UserPreferencesRepository
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,6 +24,7 @@ class AuthViewModel @Inject constructor(
     private val auth: FirebaseAuth,
     private val googleAuthClient: GoogleAuthClient,
     private val userPreferencesRepository: UserPreferencesRepository,
+    private val firebaseRepository: FirebaseRepository,
     application: Application
 ): AndroidViewModel(application) {
 
@@ -99,6 +101,9 @@ class AuthViewModel @Inject constructor(
                     )
 
                     //todo save user to firestore
+                    currentUser?.let {
+                        firebaseRepository.saveUserToFireStore(it)
+                    }
                 }else{
                     _authState.value = AuthState.Error(result.errorMessage ?: "Sign in failed")
                 }

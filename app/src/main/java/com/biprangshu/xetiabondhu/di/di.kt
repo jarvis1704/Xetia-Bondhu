@@ -5,6 +5,7 @@ import com.biprangshu.xetiabondhu.authentication.GoogleAuthClient
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -37,4 +38,8 @@ object FirebaseModule{
         return GoogleAuthClient(context = context, oneTapClient = oneTapClient)
     }
 
+    @Provides
+    fun provideFirebaseFirestore(): FirebaseFirestore{
+        return FirebaseFirestore.getInstance()
+    }
 }
