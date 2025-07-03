@@ -32,6 +32,8 @@ fun HomeScreen(
 ) {
 
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+    var isSubmitButtonActive by remember{ mutableStateOf(false)}
+
     Column (
         modifier = modifier.fillMaxSize().padding(16.dp),
         verticalArrangement = Arrangement.Center,
@@ -47,6 +49,7 @@ fun HomeScreen(
         //display selected Image
         selectedImageUri?.let {
             uri->
+            isSubmitButtonActive=true
             Spacer(Modifier.height(16.dp))
             Card(
                 modifier= modifier.fillMaxWidth(),
@@ -68,7 +71,10 @@ fun HomeScreen(
                         horizontalArrangement = Arrangement.End
                     ) {
                         TextButton(
-                            onClick = { selectedImageUri = null }
+                            onClick = {
+                                selectedImageUri = null
+                                isSubmitButtonActive=false
+                            }
                         ) {
                             Text("Remove")
                         }
@@ -77,6 +83,12 @@ fun HomeScreen(
             }
         }
         Spacer(Modifier.height(16.dp))
+        Button(
+            onClick = {},
+            enabled = isSubmitButtonActive
+        ) {
+            Text("Analyse using AI")
+        }
         Button(
             onClick = onSignoutClick
         ) {
