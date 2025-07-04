@@ -15,6 +15,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.biprangshu.xetiabondhu.AppViewmodel
 import com.biprangshu.xetiabondhu.appui.HomeScreen
 import com.biprangshu.xetiabondhu.appui.LoadingScreen
 import com.biprangshu.xetiabondhu.appui.LoginScreen
@@ -23,12 +24,14 @@ import com.biprangshu.xetiabondhu.authentication.AuthViewModel
 import com.biprangshu.xetiabondhu.datamodel.AuthState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 @Composable
 fun Navigation(
     modifier: Modifier = Modifier,
     navcontroller: NavHostController,
-    authViewModel: AuthViewModel = hiltViewModel()
+    authViewModel: AuthViewModel = hiltViewModel(),
+    appViewmodel: AppViewmodel = hiltViewModel()
 ) {
 
     val context = LocalContext.current
@@ -81,6 +84,11 @@ fun Navigation(
             HomeScreen(
                 onSignoutClick = {
                     authViewModel.signOut()
+                },
+                onSubmitClick = {
+                    val requestId = UUID.randomUUID()
+                    appViewmodel.getRequestId(requestId)
+                    appViewmodel.uploadImageToStorage(it)
                 }
             )
         }

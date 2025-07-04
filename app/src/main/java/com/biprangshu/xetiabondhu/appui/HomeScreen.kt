@@ -28,7 +28,8 @@ import coil.compose.AsyncImage
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    onSignoutClick: ()-> Unit
+    onSignoutClick: ()-> Unit,
+    onSubmitClick: (Uri) -> Unit
 ) {
 
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
@@ -84,7 +85,11 @@ fun HomeScreen(
         }
         Spacer(Modifier.height(16.dp))
         Button(
-            onClick = {},
+            onClick = {
+                selectedImageUri?.let {
+                    onSubmitClick(it)
+                }
+            },
             enabled = isSubmitButtonActive
         ) {
             Text("Analyse using AI")

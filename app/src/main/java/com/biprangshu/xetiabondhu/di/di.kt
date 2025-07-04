@@ -2,6 +2,7 @@ package com.biprangshu.xetiabondhu.di
 
 import android.content.Context
 import com.biprangshu.xetiabondhu.authentication.GoogleAuthClient
+import com.biprangshu.xetiabondhu.repository.FirebaseRepository
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.firebase.auth.FirebaseAuth
@@ -47,5 +48,15 @@ object FirebaseModule{
     @Provides
     fun providesFirebaseStorage(): FirebaseStorage{
         return FirebaseStorage.getInstance()
+    }
+
+    @Provides
+    @Singleton
+    fun provideFirebaseRepository(
+        auth: FirebaseAuth,
+        db: FirebaseFirestore,
+        firebaseStorage: FirebaseStorage
+    ): FirebaseRepository{
+        return FirebaseRepository(auth = auth, db = db, firebaseStorage = firebaseStorage)
     }
 }

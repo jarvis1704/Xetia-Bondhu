@@ -1,12 +1,18 @@
 package com.biprangshu.xetiabondhu.repository
 
+import android.net.Uri
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.biprangshu.xetiabondhu.datamodel.UserData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.tasks.await
+import java.util.UUID
 import javax.inject.Inject
 
 class FirebaseRepository @Inject constructor(
@@ -14,6 +20,8 @@ class FirebaseRepository @Inject constructor(
     private val db: FirebaseFirestore,
     private val firebaseStorage: FirebaseStorage
 ){
+
+    private var _requestId by mutableStateOf<UUID?>(null)
 
     suspend fun saveUserToFireStore(user: FirebaseUser){
         val userData = UserData(
@@ -31,6 +39,30 @@ class FirebaseRepository @Inject constructor(
                 e->
                 Log.e("Firebase Repostory", "failed to store data in firestore", e)
             }
+    }
+
+    fun updateRequestId(id: UUID?){
+        _requestId = id
+    }
+
+    suspend fun uploadImageToStorage(uri: Uri){
+        try {
+            val storageRef = firebaseStorage.reference
+            val user = auth.currentUser
+            user?.let {
+                //path for image
+                val path = "uploads/${user.uid}/$_requestId.jpg"
+
+                val imageRef = storageRef.child(path)
+
+                //uploading the file
+                val uploadImage = imageRef.putFile(uri).await()
+
+                Log.d("Firebase Repository", "Image Uploaded sucessfully $uploadImage")
+            }
+        }catch (e: Exception){
+            Log.e("Firebase Repostory", "Error in uploading image to storage")
+        }
     }
 
 }
