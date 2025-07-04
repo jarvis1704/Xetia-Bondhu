@@ -6,11 +6,13 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
+import com.google.firebase.storage.FirebaseStorage
 import javax.inject.Inject
 
 class FirebaseRepository @Inject constructor(
     private val auth: FirebaseAuth,
-    private val db: FirebaseFirestore
+    private val db: FirebaseFirestore,
+    private val firebaseStorage: FirebaseStorage
 ){
 
     suspend fun saveUserToFireStore(user: FirebaseUser){
