@@ -5,6 +5,7 @@ import com.biprangshu.xetiabondhu.datamodel.UserData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import javax.inject.Inject
 
 class FirebaseRepository @Inject constructor(
@@ -21,7 +22,7 @@ class FirebaseRepository @Inject constructor(
 
         Log.d("Firebase Repostitory", "Saving user to firestore")
 
-        db.collection("users").document(user.uid).set(userData)
+        db.collection("users").document(user.uid).set(userData, SetOptions.merge())
             .addOnSuccessListener {
             Log.d("Firebase Repostory", "Saved user to firestore")
         }.addOnFailureListener {
