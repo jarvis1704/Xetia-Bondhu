@@ -84,7 +84,7 @@ class FirebaseRepository @Inject constructor(
             .set(currentRequest)
             .await()
 
-        val path = "uploads/${user.uid}/$_requestId.jpg"
+        val path = "uploads/${user.uid}/$requestId.jpg"
         //upload image to storage
         firebaseStorage.reference.child(path).putFile(uri).await()
 

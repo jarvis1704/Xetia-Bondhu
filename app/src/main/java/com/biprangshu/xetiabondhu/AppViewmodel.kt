@@ -74,5 +74,9 @@ class AppViewmodel @Inject constructor(
         }
     }
 
+    fun resetAnalysisState(){
+        _analysisState.value = AnalysisState.Idle
+    }
+
 
 }

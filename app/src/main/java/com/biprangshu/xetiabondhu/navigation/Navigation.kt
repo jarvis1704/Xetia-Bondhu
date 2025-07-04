@@ -2,6 +2,7 @@ package com.biprangshu.xetiabondhu.navigation
 
 import android.app.Activity
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -16,11 +17,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.biprangshu.xetiabondhu.AppViewmodel
+import com.biprangshu.xetiabondhu.appui.AnalysisLoadingScreen
 import com.biprangshu.xetiabondhu.appui.HomeScreen
 import com.biprangshu.xetiabondhu.appui.LoadingScreen
 import com.biprangshu.xetiabondhu.appui.LoginScreen
 import com.biprangshu.xetiabondhu.appui.ResultScreen
 import com.biprangshu.xetiabondhu.authentication.AuthViewModel
+import com.biprangshu.xetiabondhu.datamodel.AnalysisState
 import com.biprangshu.xetiabondhu.datamodel.AuthState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -86,6 +89,8 @@ fun Navigation(
                     authViewModel.signOut()
                 },
                 onSubmitClick = {
+                    uri->
+                    appViewmodel.analysisImage(uri)
                 }
             )
         }
@@ -127,8 +132,41 @@ fun Navigation(
             LoadingScreen()
         }
 
+        composable(NavigationScreens.ANALYSISLOADINGSCREEN) {
+            val analysisState = appViewmodel.analysisState.collectAsState().value
+            when(analysisState){
+                is AnalysisState.Loading -> AnalysisLoadingScreen()
+                is AnalysisState.Success -> {
+                    LaunchedEffect(analysisState) {
+                        navcontroller.navigate(NavigationScreens.RESULTSCREEN){
+                            popUpTo(NavigationScreens.HOMESCREEN)
+                        }
+                    }
+                }
+                is AnalysisState.Error -> {
+                    //showing an error and going back home
+                    LaunchedEffect(analysisState) {
+                        Toast.makeText(context, analysisState.message, Toast.LENGTH_LONG).show()
+                        navcontroller.popBackStack()
+                    }
+                }
+                else -> {/*no other case shoould happen here*/}
+            }
+        }
+
         composable(NavigationScreens.RESULTSCREEN){
-            ResultScreen()
+            val analysisState = appViewmodel.analysisState.collectAsState().value
+            if(analysisState is AnalysisState.Success){
+                ResultScreen(
+                    disease = analysisState.result.diseaseName,
+                    description = analysisState.result.description,
+                    solution = analysisState.result.solution,
+                    onBack ={
+                        appViewmodel.resetAnalysisState() //setting it to idle
+                        navcontroller.popBackStack()
+                    }
+                )
+            }
         }
     }
 }
