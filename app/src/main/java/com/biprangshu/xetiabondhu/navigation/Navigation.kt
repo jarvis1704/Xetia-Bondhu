@@ -86,9 +86,6 @@ fun Navigation(
                     authViewModel.signOut()
                 },
                 onSubmitClick = {
-                    val requestId = UUID.randomUUID()
-                    appViewmodel.getRequestId(requestId)
-                    appViewmodel.uploadImageToStorage(it)
                 }
             )
         }
