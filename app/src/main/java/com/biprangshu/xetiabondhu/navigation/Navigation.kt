@@ -39,7 +39,28 @@ fun Navigation(
 
     val context = LocalContext.current
     val authState = authViewModel.authState.collectAsState().value
+    val analysisState  = appViewmodel.analysisState.collectAsState().value
     val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(analysisState) {
+        when(analysisState){
+            is AnalysisState.Success -> {
+                navcontroller.navigate(NavigationScreens.RESULTSCREEN)
+            }
+
+            is AnalysisState.Error -> {
+                Toast.makeText(context, analysisState.message, Toast.LENGTH_LONG).show()
+                appViewmodel.resetAnalysisState()
+            }
+
+            is AnalysisState.Loading -> {
+                navcontroller.navigate(NavigationScreens.ANALYSISLOADINGSCREEN)
+            }
+
+            //can be kept blank
+            else -> { }
+        }
+    }
 
     LaunchedEffect(authState) {
         Log.d("authstate","authstate = ${authState}")
@@ -133,25 +154,7 @@ fun Navigation(
         }
 
         composable(NavigationScreens.ANALYSISLOADINGSCREEN) {
-            val analysisState = appViewmodel.analysisState.collectAsState().value
-            when(analysisState){
-                is AnalysisState.Loading -> AnalysisLoadingScreen()
-                is AnalysisState.Success -> {
-                    LaunchedEffect(analysisState) {
-                        navcontroller.navigate(NavigationScreens.RESULTSCREEN){
-                            popUpTo(NavigationScreens.HOMESCREEN)
-                        }
-                    }
-                }
-                is AnalysisState.Error -> {
-                    //showing an error and going back home
-                    LaunchedEffect(analysisState) {
-                        Toast.makeText(context, analysisState.message, Toast.LENGTH_LONG).show()
-                        navcontroller.popBackStack()
-                    }
-                }
-                else -> {/*no other case shoould happen here*/}
-            }
+            AnalysisLoadingScreen()
         }
 
         composable(NavigationScreens.RESULTSCREEN){
@@ -163,7 +166,7 @@ fun Navigation(
                     solution = analysisState.result.solution,
                     onBack ={
                         appViewmodel.resetAnalysisState() //setting it to idle
-                        navcontroller.popBackStack()
+                        navcontroller.navigate(NavigationScreens.HOMESCREEN)
                     }
                 )
             }

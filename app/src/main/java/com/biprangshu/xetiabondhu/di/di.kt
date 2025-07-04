@@ -52,11 +52,18 @@ object FirebaseModule{
 
     @Provides
     @Singleton
+    fun provideApplicationContext(@ApplicationContext context: Context): Context {
+        return context
+    }
+
+    @Provides
+    @Singleton
     fun provideFirebaseRepository(
         auth: FirebaseAuth,
         db: FirebaseFirestore,
-        firebaseStorage: FirebaseStorage
+        firebaseStorage: FirebaseStorage,
+        context: Context
     ): FirebaseRepository{
-        return FirebaseRepository(auth = auth, db = db, firebaseStorage = firebaseStorage)
+        return FirebaseRepository(auth = auth, db = db, firebaseStorage = firebaseStorage, context = context)
     }
 }

@@ -26,6 +26,11 @@ class AppViewmodel @Inject constructor(
     private val _analysisState = MutableStateFlow<AnalysisState>(AnalysisState.Idle)
     val analysisState: StateFlow<AnalysisState> = _analysisState.asStateFlow()
 
+    //history states
+    private val _analysisHistory = MutableStateFlow<List<AnalysisResult>>(emptyList())
+    val analysisHistory: StateFlow<List<AnalysisResult>> = _analysisHistory.asStateFlow()
+
+
 
 //    fun uploadImageToStorage(uri: Uri){
 //        viewModelScope.launch {
@@ -43,36 +48,20 @@ class AppViewmodel @Inject constructor(
             _analysisState.value = AnalysisState.Loading
 
             try {
-                //generating a fresh analysis request
-                val requestId = firebaseRepository.createAnalysisAndUpload(uri)
 
-                //listening to the cloud function to update firestore
-                firebaseRepository.documentUpdateListener(requestId){
-                    snapshot->
-                    val status = snapshot.getString("status")
-                    when(status){
-                        "complete" -> {
-                            val map = snapshot.get("result") as Map<*, *>
-                            val result = AnalysisResult(
-                                diseaseName = map["diseaseName"] as String,
-                                description = map["description"] as String,
-                                solution = map["solution"] as String,
-                            )
-                            //analysis complete
-                            _analysisState.value = AnalysisState.Success(result)
-                        }
-                        "error" -> {
-                            val error = snapshot.getString("error") ?: "Unknown Error"
-                            _analysisState.value = AnalysisState.Error(error)
-                        }
-                    }
+                //calling ai for analysis
+                val result = firebaseRepository.createAnalysis(uri)
 
-                }
+                //result sucessfull
+                _analysisState.value = AnalysisState.Success(result)
+
             }catch (e: Exception) {
                 _analysisState.value = AnalysisState.Error(e.message ?: "Upload failed")
             }
         }
     }
+
+    //TODO: Implement retriving analysis history in history screen
 
     fun resetAnalysisState(){
         _analysisState.value = AnalysisState.Idle

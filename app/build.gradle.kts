@@ -110,4 +110,6 @@ dependencies {
     implementation("androidx.activity:activity-compose:1.8.2")
     implementation("io.coil-kt:coil-compose:2.5.0")
     implementation("androidx.activity:activity-ktx:1.9.0")
+
+//    implementation("com.google.firebase:firebase-ai")
 }
