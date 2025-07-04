@@ -18,6 +18,7 @@ import androidx.navigation.compose.composable
 import com.biprangshu.xetiabondhu.appui.HomeScreen
 import com.biprangshu.xetiabondhu.appui.LoadingScreen
 import com.biprangshu.xetiabondhu.appui.LoginScreen
+import com.biprangshu.xetiabondhu.appui.ResultScreen
 import com.biprangshu.xetiabondhu.authentication.AuthViewModel
 import com.biprangshu.xetiabondhu.datamodel.AuthState
 import kotlinx.coroutines.delay
@@ -119,6 +120,10 @@ fun Navigation(
 
         composable(NavigationScreens.LOADINGSCREEN) {
             LoadingScreen()
+        }
+
+        composable(NavigationScreens.RESULTSCREEN){
+            ResultScreen()
         }
     }
 }
