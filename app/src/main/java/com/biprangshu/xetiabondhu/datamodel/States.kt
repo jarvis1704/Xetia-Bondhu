@@ -16,3 +16,10 @@ sealed class UpdateState {
     object Success : UpdateState()
     data class Error(val message: String) : UpdateState()
 }
+
+sealed class AnalysisState{
+    object Idle: AnalysisState()
+    object Loading: AnalysisState()
+    data class Success(val result: AnalysisResult): AnalysisState()
+    data class Error(val message: String): AnalysisState()
+}
