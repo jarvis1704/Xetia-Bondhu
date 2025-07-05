@@ -9,11 +9,14 @@ import com.biprangshu.xetiabondhu.appui.HistoryItem
 import com.biprangshu.xetiabondhu.datamodel.AnalysisResult
 import com.biprangshu.xetiabondhu.datamodel.AnalysisState
 import com.biprangshu.xetiabondhu.repository.FirebaseRepository
+import com.biprangshu.xetiabondhu.repository.UserPreferencesRepository
+import com.biprangshu.xetiabondhu.utils.CurrentUserObject
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
@@ -22,8 +25,15 @@ import javax.inject.Inject
 class AppViewmodel @Inject constructor(
     private val firebaseRepository: FirebaseRepository,
     private val auth: FirebaseAuth,
+    private val userPreferencesRepository: UserPreferencesRepository,
     application: Application
 ): AndroidViewModel(application) {
+
+    init {
+        viewModelScope.launch {
+            updateCurrentUserObject()
+        }
+    }
 
 
     //analysis states
@@ -89,6 +99,12 @@ class AppViewmodel @Inject constructor(
                 _isHistoryLoading.value=false
             }
         }
+    }
+
+    suspend fun updateCurrentUserObject(){
+        CurrentUserObject.userId = userPreferencesRepository.userId.first()
+        CurrentUserObject.username = userPreferencesRepository.userName.first()
+        CurrentUserObject.useremail = userPreferencesRepository.userEmail.first()
     }
 
     fun resetAnalysisState(){
