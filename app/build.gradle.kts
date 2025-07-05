@@ -111,5 +111,6 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.5.0")
     implementation("androidx.activity:activity-ktx:1.9.0")
 
-//    implementation("com.google.firebase:firebase-ai")
+
+    implementation("androidx.compose.material:material-icons-extended:1.7.8")
 }
