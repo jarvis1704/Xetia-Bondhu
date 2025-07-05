@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -37,7 +38,7 @@ fun Navigation(
     modifier: Modifier = Modifier,
     navcontroller: NavHostController,
     authViewModel: AuthViewModel = hiltViewModel(),
-    appViewmodel: AppViewmodel = hiltViewModel()
+    appViewmodel: AppViewmodel = hiltViewModel(),
 ) {
 
     val context = LocalContext.current
@@ -112,10 +113,9 @@ fun Navigation(
                 onSignoutClick = {
                     authViewModel.signOut()
                 },
-                onSubmitClick = {
-                    uri->
+                onSubmitClick = { uri ->
                     appViewmodel.analysisImage(uri)
-                }
+                },
             )
         }
 
