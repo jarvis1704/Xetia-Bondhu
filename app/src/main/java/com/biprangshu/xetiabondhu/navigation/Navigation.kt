@@ -18,6 +18,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.biprangshu.xetiabondhu.AppViewmodel
 import com.biprangshu.xetiabondhu.appui.AnalysisLoadingScreen
+import com.biprangshu.xetiabondhu.appui.HistoryItem
 import com.biprangshu.xetiabondhu.appui.HistoryScreen
 import com.biprangshu.xetiabondhu.appui.HomeScreen
 import com.biprangshu.xetiabondhu.appui.LoadingScreen
@@ -176,7 +177,23 @@ fun Navigation(
         }
 
         composable(NavigationScreens.HISTORYSCREEN) {
-            HistoryScreen()
+            val historyItems = appViewmodel.analysisHistory.collectAsState().value
+            val isLoading = appViewmodel.isHistoryLoading.collectAsState().value
+
+            LaunchedEffect(Unit) {
+                appViewmodel.loadAnalysisHistory()
+            }
+
+            HistoryScreen(
+                historyItems = historyItems,
+                isLoading = isLoading,
+                onBackClick = {
+                    navcontroller.popBackStack()
+                },
+                onRefresh = {
+                    appViewmodel.loadAnalysisHistory()
+                }
+            )
         }
 
         composable(NavigationScreens.USERDETAILSCREEN) {

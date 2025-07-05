@@ -11,6 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.graphics.decodeBitmap
+import com.biprangshu.xetiabondhu.appui.HistoryItem
 import com.biprangshu.xetiabondhu.datamodel.AnalysisResult
 import com.biprangshu.xetiabondhu.datamodel.UserData
 import com.google.firebase.Firebase
@@ -297,29 +298,60 @@ class FirebaseRepository @Inject constructor(
     }
 
     //function to get analysis history
-    suspend fun getAnalysisHistory(userId: String): List<AnalysisResult>{
+    suspend fun getAnalysisHistory(userId: String): List<HistoryItem>{
         return try {
+            Log.d("Firebase Repository", "Fetching analysis history for user: $userId")
+
             val querySnapshot = db.collection("analysis_history")
                 .whereEqualTo("userId", userId)
-                .orderBy("timestamp", Query.Direction.DESCENDING)
-                .limit(20)
                 .get()
                 .await()
 
-            querySnapshot.documents.mapNotNull {
-                doc->
+            Log.d("Firebase Repository", "Found ${querySnapshot.documents.size} history documents")
+
+
+            val historyItems = querySnapshot.documents.mapNotNull { doc ->
                 try {
-                    AnalysisResult(
-                        diseaseName = doc.getString("diseaseName") ?: "Unknown",
-                        description = doc.getString("description")?: "",
-                        solution = doc.getString("solution")?: "",
+                    Log.d("Firebase Repository", "Processing document: ${doc.id}")
+                    Log.d("Firebase Repository", "Document data: ${doc.data}")
+
+                    val analysisResult = AnalysisResult(
+                        diseaseName = doc.getString("diseaseName") ?: "Unknown Disease",
+                        description = doc.getString("description") ?: "No description available",
+                        solution = doc.getString("solution") ?: "No solution available",
+                        imageDownlaodUrl = doc.getString("downloadLink") ?: ""
                     )
-                }catch (e: Exception) {
-                    Log.e("Firebase Repository", "Error parsing history item", e)
+
+                    val timestamp = doc.getTimestamp("timestamp")
+                    val timestampString = if (timestamp != null) {
+                        try {
+                            val date = timestamp.toDate()
+                            val format = java.text.SimpleDateFormat("d MMMM yyyy 'at' HH:mm:ss z", java.util.Locale.ENGLISH)
+                            format.format(date)
+                        } catch (e: Exception) {
+                            Log.e("Firebase Repository", "Error formatting timestamp", e)
+                            "Unknown date"
+                        }
+                    } else {
+                        "Unknown date"
+                    }
+
+                    Log.d("Firebase Repository", "Created HistoryItem: disease=${analysisResult.diseaseName}, timestamp=$timestampString")
+
+                    HistoryItem(
+                        analysisResult = analysisResult,
+                        timestamp = timestampString
+                    ) to (timestamp?.toDate()?.time ?: 0L)
+                } catch (e: Exception) {
+                    Log.e("Firebase Repository", "Error parsing history item from document ${doc.id}", e)
                     null
                 }
-            }
-        }catch (e: Exception) {
+            }.sortedByDescending { it.second }
+                .take(50)
+                .map { it.first }
+
+            historyItems
+        } catch (e: Exception) {
             Log.e("Firebase Repository", "Error fetching analysis history", e)
             emptyList()
         }
