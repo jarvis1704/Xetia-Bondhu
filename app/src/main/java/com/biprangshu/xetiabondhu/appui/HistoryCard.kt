@@ -1,6 +1,7 @@
 package com.biprangshu.xetiabondhu.appui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -18,8 +19,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.biprangshu.xetiabondhu.datamodel.AnalysisResult
+import com.biprangshu.xetiabondhu.navigation.NavigationScreens
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -27,12 +30,16 @@ import java.util.*
 fun HistoryCard(
     analysisResult: AnalysisResult,
     timestamp: String,
+    onClick: (AnalysisResult)-> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 6.dp),
+            .padding(horizontal = 16.dp, vertical = 6.dp)
+            .clickable{
+                onClick(analysisResult)
+            },
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(

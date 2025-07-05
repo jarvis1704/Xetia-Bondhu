@@ -192,6 +192,11 @@ fun Navigation(
                 },
                 onRefresh = {
                     appViewmodel.loadAnalysisHistory()
+                },
+                onCardClick = {
+                    analysisResult ->
+                    appViewmodel.setAnalysisFromHistory(analysisResult)
+                    navcontroller.navigate(NavigationScreens.RESULTSCREEN)
                 }
             )
         }

@@ -35,7 +35,8 @@ fun HistoryScreen(
     historyItems: List<HistoryItem>,
     isLoading: Boolean = false,
     onBackClick: () -> Unit = {},
-    onRefresh: () -> Unit = {}
+    onRefresh: () -> Unit = {},
+    onCardClick: (AnalysisResult) -> Unit
 ) {
     Box(
         modifier = modifier
@@ -246,7 +247,8 @@ fun HistoryScreen(
                     items(historyItems) { historyItem ->
                         HistoryCard(
                             analysisResult = historyItem.analysisResult,
-                            timestamp = historyItem.timestamp
+                            timestamp = historyItem.timestamp,
+                            onClick = onCardClick
                         )
                     }
                 }

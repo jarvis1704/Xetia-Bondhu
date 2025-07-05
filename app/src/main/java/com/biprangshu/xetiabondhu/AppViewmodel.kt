@@ -107,6 +107,10 @@ class AppViewmodel @Inject constructor(
         CurrentUserObject.useremail = userPreferencesRepository.userEmail.first()
     }
 
+    fun setAnalysisFromHistory(analysisResult: AnalysisResult) {
+        _analysisState.value = AnalysisState.Success(analysisResult)
+    }
+
     fun resetAnalysisState(){
         _analysisState.value = AnalysisState.Idle
     }
