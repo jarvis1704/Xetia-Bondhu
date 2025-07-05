@@ -57,7 +57,6 @@ fun HomeScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .statusBarsPadding()
             .background(
                 brush = Brush.verticalGradient(
                     colors = listOf(
@@ -70,6 +69,7 @@ fun HomeScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .statusBarsPadding()
                 .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically

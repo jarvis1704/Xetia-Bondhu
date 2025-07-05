@@ -37,7 +37,7 @@ class MainActivity : ComponentActivity() {
                         val navBackStackEntry by navController.currentBackStackEntryAsState()
                         val currentDestination = navBackStackEntry?.destination
 
-                        // Define the routes where the BottomBar should be visible
+
                         val bottomBarVisibleRoutes = listOf(
                             NavigationScreens.HOMESCREEN,
                             NavigationScreens.HISTORYSCREEN,
