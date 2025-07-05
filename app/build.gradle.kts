@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -7,6 +10,18 @@ plugins {
     id("kotlin-parcelize")
     id("com.google.dagger.hilt.android")
     id("com.google.gms.google-services")
+}
+
+//for gradle signin report
+val keystoreProperties = Properties()
+val keystorePropertiesFile = rootProject.file("local.properties")
+
+if (keystorePropertiesFile.exists()) {
+    FileInputStream(keystorePropertiesFile).use {
+        keystoreProperties.load(it)
+    }
+} else {
+    throw GradleException("local.properties not found! Please create it with keystore details.")
 }
 
 android {
@@ -23,13 +38,29 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file(keystoreProperties.getProperty("storeFile")
+                ?: throw GradleException("storeFile not found in local.properties"))
+            storePassword = keystoreProperties.getProperty("storePassword")
+                ?: throw GradleException("storePassword not found in local.properties")
+            keyAlias = keystoreProperties.getProperty("keyAlias")
+                ?: throw GradleException("keyAlias not found in local.properties")
+            keyPassword = keystoreProperties.getProperty("keyPassword")
+                ?: throw GradleException("keyPassword not found in local.properties")
+        }
+    }
+
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources=true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {
