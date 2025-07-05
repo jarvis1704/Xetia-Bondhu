@@ -78,20 +78,24 @@ class FirebaseRepository @Inject constructor(
 
             //prompt for analysis
             val prompt = """
-                You are an expert in agricultural science specializing in tea and paddy (rice) crops common in Assam, India.
-                Analyze this image of a plant leaf.
-                
-                Please provide:
-                1. Identify the most likely disease or pest affecting the plant
-                2. Provide a brief, simple description of the issue in 2-3 sentences
-                3. Suggest a practical, actionable solution or remedy for a local farmer in Assam
-                
-                Important: If the image is not a plant leaf, is unclear, or you cannot identify any issue, 
-                set the disease name to "Healthy" or "Unknown" and provide appropriate guidance.
-                
-                Provide your response in a structured format with clear sections for disease name, description, and solution.
-                Keep the language simple and practical for local farmers.
-            """.trimIndent()
+    You are an expert in agricultural science specializing in tea and paddy (rice) crops common in Assam, India.
+    Analyze this image of a plant leaf and provide a structured response.
+    
+    Format your response EXACTLY as follows:
+    
+    DISEASE: [Name of the disease/pest/condition or "Healthy" if no issues found]
+    
+    DESCRIPTION: [2-3 sentences describing the condition, symptoms, or health status]
+    
+    SOLUTION: [Practical recommendations for farmers in Assam. If healthy, provide maintenance tips]
+    
+    Important guidelines:
+    - Use ONLY the keywords DISEASE, DESCRIPTION, and SOLUTION as section headers
+    - Do not use asterisks, markdown formatting, or numbers
+    - Keep language simple and practical for local farmers
+    - If the image is unclear or not a plant leaf, set DISEASE to "Image Unclear"
+    - Each section should be on a new line after the header
+""".trimIndent()
 
             val bitmap: Bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 ImageDecoder.decodeBitmap(ImageDecoder.createSource(context.contentResolver, uri))
@@ -129,76 +133,104 @@ class FirebaseRepository @Inject constructor(
         }
     }
 
-    private fun parseAiResponse(responseText: String): AnalysisResult{
+    private fun parseAiResponse(responseText: String): AnalysisResult {
         return try {
-
-            val lines = responseText.split("\n").filter { it.isNotBlank() }
-
             var diseaseName = "Unknown"
             var description = ""
             var solution = ""
 
+            //cleaning the reponse before formatting
+            val cleanedText = responseText
+                .replace("**", "")  //bold markers
+                .replace("*", "")   //italic markers
+                .replace("##", "")  //heading markers
+                .replace("#", "")   //heading markers
+
+            val lines = cleanedText.split("\n").map { it.trim() }.filter { it.isNotEmpty() }
+
             var currentSection = ""
+            val diseaseLines = mutableListOf<String>()
             val descriptionLines = mutableListOf<String>()
             val solutionLines = mutableListOf<String>()
 
-            for (line in lines){
-                val cleanLine = line.trim()
-                when{
-                    cleanLine.contains("disease", ignoreCase = true) &&
-                            cleanLine.contains(":", ignoreCase = true) -> {
+            for (line in lines) {
+                when {
+                    //section header to exactly match
+                    line.uppercase().startsWith("DISEASE:") -> {
                         currentSection = "disease"
-                        diseaseName = cleanLine.substringAfter(":").trim()
+                        val content = line.substring(8).trim()
+                        if (content.isNotEmpty()) diseaseLines.add(content)
                     }
-                    cleanLine.contains("description", ignoreCase = true) &&
-                            cleanLine.contains(":", ignoreCase = true) -> {
+                    line.uppercase().startsWith("DESCRIPTION:") -> {
                         currentSection = "description"
-                        val desc = cleanLine.substringAfter(":").trim()
-                        if (desc.isNotEmpty()) descriptionLines.add(desc)
+                        val content = line.substring(12).trim()
+                        if (content.isNotEmpty()) descriptionLines.add(content)
                     }
-                    cleanLine.contains("solution", ignoreCase = true) &&
-                            cleanLine.contains(":", ignoreCase = true) -> {
+                    line.uppercase().startsWith("SOLUTION:") -> {
                         currentSection = "solution"
-                        val sol = cleanLine.substringAfter(":").trim()
-                        if (sol.isNotEmpty()) solutionLines.add(sol)
+                        val content = line.substring(9).trim()
+                        if (content.isNotEmpty()) solutionLines.add(content)
                     }
-                    cleanLine.isNotEmpty() -> {
+
+                    //fallback method
+                    line.contains("disease", ignoreCase = true) && line.contains(":") -> {
+                        currentSection = "disease"
+                        val content = line.substringAfter(":").trim()
+                        if (content.isNotEmpty()) diseaseLines.add(content)
+                    }
+                    line.contains("description", ignoreCase = true) && line.contains(":") -> {
+                        currentSection = "description"
+                        val content = line.substringAfter(":").trim()
+                        if (content.isNotEmpty()) descriptionLines.add(content)
+                    }
+                    line.contains("solution", ignoreCase = true) && line.contains(":") -> {
+                        currentSection = "solution"
+                        val content = line.substringAfter(":").trim()
+                        if (content.isNotEmpty()) solutionLines.add(content)
+                    }
+
+                    //content lines
+                    line.isNotEmpty() -> {
                         when (currentSection) {
-                            "description" -> descriptionLines.add(cleanLine)
-                            "solution" -> solutionLines.add(cleanLine)
+                            "disease" -> diseaseLines.add(line)
+                            "description" -> descriptionLines.add(line)
+                            "solution" -> solutionLines.add(line)
+                            "" -> {
+
+                                if (diseaseLines.isEmpty() && line.length < 100) {
+                                    diseaseLines.add(line)
+                                    currentSection = "disease"
+                                }
+                            }
                         }
                     }
                 }
             }
 
-            //if above parsing fails
-            if (diseaseName == "Unknown" || description.isEmpty()) {
-                // Fallback: use the first few lines for disease name
-                val firstLine = lines.firstOrNull()?.trim() ?: "Unknown Issue"
-                diseaseName = if (firstLine.length > 50) firstLine.substring(0, 50) + "..." else firstLine
 
-                description = if (lines.size > 1) {
-                    lines.subList(1, minOf(lines.size, 4)).joinToString(" ")
-                } else {
-                    "The image has been analyzed. Please consult with a local agricultural expert for detailed guidance."
-                }
+            diseaseName = diseaseLines.joinToString(" ").trim()
+            description = descriptionLines.joinToString(" ").trim()
+            solution = solutionLines.joinToString(" ").trim()
 
-                solution = if (lines.size > 4) {
-                    lines.subList(4, lines.size).joinToString(" ")
-                } else {
-                    "Apply general plant care practices and consult local agricultural extension services."
-                }
-            } else {
-                description = descriptionLines.joinToString(" ")
-                solution = solutionLines.joinToString(" ")
+
+            if (diseaseName.isEmpty() || description.isEmpty()) {
+                val fallbackResult = intelligentFallbackParse(lines)
+                if (diseaseName.isEmpty()) diseaseName = fallbackResult.first
+                if (description.isEmpty()) description = fallbackResult.second
+                if (solution.isEmpty()) solution = fallbackResult.third
             }
 
             AnalysisResult(
-                diseaseName = diseaseName,
-                description = description.ifEmpty { "Analysis completed. Please consult with local experts for detailed guidance." },
-                solution = solution.ifEmpty { "Apply general plant care practices and consult local agricultural extension services." }
+                diseaseName = cleanText(diseaseName).ifEmpty { "Analysis Completed" },
+                description = cleanText(description).ifEmpty {
+                    "The image has been analyzed. Please consult with local experts for detailed guidance."
+                },
+                solution = cleanText(solution).ifEmpty {
+                    "Apply general plant care practices and consult local agricultural extension services."
+                }
             )
-        }catch (e: Exception) {
+
+        } catch (e: Exception) {
             Log.e("Firebase Repository", "Error parsing AI response", e)
             AnalysisResult(
                 diseaseName = "Analysis Completed",
@@ -255,6 +287,52 @@ class FirebaseRepository @Inject constructor(
             Log.e("Firebase Repository", "Error fetching analysis history", e)
             emptyList()
         }
+    }
+
+    //helper functions to parse text
+    private fun cleanText(text: String): String {
+        return text.trim()
+            .replace(Regex("\\s+"), " ")  //replace multiple spaces with single space
+            .replace(Regex("^[\\d\\.\\-\\*\\•]+\\s*"), "")  //remove leading numbers, dots, dashes, bullets
+    }
+
+    //fallback parsing
+    private fun intelligentFallbackParse(lines: List<String>): Triple<String, String, String> {
+        var diseaseName = "Unknown Issue"
+        var description = ""
+        var solution = ""
+
+        if (lines.isNotEmpty()) {
+            val firstMeaningfulLine = lines.firstOrNull { line ->
+                line.isNotEmpty() &&
+                        !line.contains("analyze", ignoreCase = true) &&
+                        !line.contains("image", ignoreCase = true) &&
+                        line.length > 3
+            }
+
+            if (firstMeaningfulLine != null) {
+                diseaseName = if (firstMeaningfulLine.length > 80) {
+                    firstMeaningfulLine.substring(0, 77) + "..."
+                } else {
+                    firstMeaningfulLine
+                }
+            }
+
+            val remainingLines = lines.filter { it != firstMeaningfulLine }
+            val totalLines = remainingLines.size
+
+            if (totalLines > 0) {
+                val midPoint = totalLines / 2
+                description = remainingLines.take(maxOf(1, midPoint)).joinToString(" ").trim()
+                solution = remainingLines.drop(midPoint).joinToString(" ").trim()
+            }
+        }
+
+        return Triple(
+            cleanText(diseaseName),
+            cleanText(description),
+            cleanText(solution)
+        )
     }
 
 
