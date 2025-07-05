@@ -42,12 +42,13 @@ class FirebaseRepository @Inject constructor(
 
     val generativeModel = Firebase.ai(backend = GenerativeBackend.vertexAI()).generativeModel(
         modelName = "gemini-2.5-flash",
-        generationConfig = generationConfig {
-            temperature = 0.7f
-            topK = 40
-            topP = 0.95f
-            maxOutputTokens = 1024
-        }
+//        generationConfig = generationConfig {
+//            temperature = 0.7f
+//            topK = 40
+//            topP = 0.95f
+//            maxOutputTokens = 1024
+//        }
+        //todo: create a generation config for your model
     )
 
 
@@ -97,17 +98,12 @@ class FirebaseRepository @Inject constructor(
     - Each section should be on a new line after the header
 """.trimIndent()
 
-            val bitmap: Bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                ImageDecoder.decodeBitmap(ImageDecoder.createSource(context.contentResolver, uri))
-            } else {
-                @Suppress("DEPRECATION")
-                MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
-            }
+            val processedBitmap = processImageForAnalysis(uri)
 
             //creating context for ai
             val inputContext = content {
                 text(prompt)
-                image(bitmap)
+                image(processedBitmap)
             }
 
             Log.d("Firebase Repository", "Sending request to Gemini API")
@@ -129,7 +125,18 @@ class FirebaseRepository @Inject constructor(
 
         }catch (e: Exception) {
             Log.e("Firebase Repository", "Error in AI analysis", e)
-            throw Exception("Analysis failed: ${e.message}")
+            //more detailed error message
+            val errorMessage = when {
+                e.message?.contains("SerializationException") == true ->
+                    "Image processing failed. Please try a different image."
+                e.message?.contains("network") == true ->
+                    "Network error. Please check your connection and try again."
+                e.message?.contains("quota") == true ->
+                    "Service temporarily unavailable. Please try again later."
+                else -> "Analysis failed: ${e.message}"
+            }
+
+            throw Exception(errorMessage)
         }
     }
 
@@ -333,6 +340,48 @@ class FirebaseRepository @Inject constructor(
             cleanText(description),
             cleanText(solution)
         )
+    }
+
+    //helper function to process image
+    private suspend fun processImageForAnalysis(uri: Uri): Bitmap{
+        //converting image to bitmap
+        val bitmap: Bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            ImageDecoder.decodeBitmap(ImageDecoder.createSource(context.contentResolver, uri))
+        } else {
+            @Suppress("DEPRECATION")
+            MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
+        }
+
+        //image size declaration
+        val maxWidth = 1024
+        val maxHeight = 1024
+        val maxFileSize = 4 * 1024 * 1024 //accounts upto 4MB
+
+        //checking if image needs resising
+        return if (bitmap.width > maxWidth || bitmap.height > maxHeight) {
+            Log.d("Firebase Repository", "Resizing image from ${bitmap.width}x${bitmap.height}")
+            //resize required, algorithm to resise it
+            val scaleFactor = minOf(
+                maxWidth.toFloat() / bitmap.width,
+                maxHeight.toFloat() / bitmap.height
+            )
+
+            val newWidth = (bitmap.width * scaleFactor).toInt()
+            val newHeight = (bitmap.height * scaleFactor).toInt()
+
+            val resizedBitmap = Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true)
+
+            // Recycle original bitmap to free memory
+            if (bitmap != resizedBitmap) {
+                bitmap.recycle()
+            }
+
+            Log.d("Firebase Repository", "Image resized to ${newWidth}x${newHeight}")
+            resizedBitmap
+        } else {
+            //resize not required, original image will do
+            bitmap
+        }
     }
 
 
