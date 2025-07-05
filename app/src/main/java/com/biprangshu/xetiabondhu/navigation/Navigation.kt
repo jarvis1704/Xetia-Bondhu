@@ -164,10 +164,11 @@ fun Navigation(
                     disease = analysisState.result.diseaseName,
                     description = analysisState.result.description,
                     solution = analysisState.result.solution,
-                    onBack ={
+                    onBack = {
                         appViewmodel.resetAnalysisState() //setting it to idle
                         navcontroller.navigate(NavigationScreens.HOMESCREEN)
-                    }
+                    },
+                    downloadLink = analysisState.result.imageDownlaodUrl
                 )
             }
         }
