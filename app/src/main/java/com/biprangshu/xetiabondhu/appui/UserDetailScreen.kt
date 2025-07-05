@@ -7,6 +7,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.biprangshu.xetiabondhu.utils.CurrentUserObject
 
 @Composable
 fun UserDetailScreen(modifier: Modifier = Modifier) {
@@ -15,6 +16,14 @@ fun UserDetailScreen(modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text("This is user detail screen")
+        Text(
+            text = "Current user name: ${CurrentUserObject.username}"
+        )
+        Text(
+            text = "Current user email: ${CurrentUserObject.useremail}"
+        )
+        Text(
+            text = "Current userid: ${CurrentUserObject.userId}"
+        )
     }
 }
