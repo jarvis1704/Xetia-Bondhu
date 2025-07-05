@@ -14,6 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import com.biprangshu.xetiabondhu.appui.BottomBar
 import com.biprangshu.xetiabondhu.navigation.Navigation
+import com.biprangshu.xetiabondhu.navigation.NavigationScreens
 import com.biprangshu.xetiabondhu.ui.theme.XetiaBondhuTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -29,7 +30,23 @@ class MainActivity : ComponentActivity() {
 
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
-                    bottomBar = { BottomBar() }
+                    bottomBar = { BottomBar(
+                        onHomeClick = {
+                            navController.navigate(NavigationScreens.HOMESCREEN){
+                                popUpTo(0){inclusive=true}
+                            }
+                        },
+                        onHistoryClick = {
+                            navController.navigate(NavigationScreens.HISTORYSCREEN){
+                                popUpTo(0){inclusive=true}
+                            }
+                        },
+                        onUserClick = {
+                            navController.navigate(NavigationScreens.USERDETAILSCREEN){
+                                popUpTo(0){inclusive=true}
+                            }
+                        }
+                    ) }
                 ) { innerPadding ->
                     Navigation(
                         navcontroller = navController

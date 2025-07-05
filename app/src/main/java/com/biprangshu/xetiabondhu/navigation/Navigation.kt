@@ -18,10 +18,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.biprangshu.xetiabondhu.AppViewmodel
 import com.biprangshu.xetiabondhu.appui.AnalysisLoadingScreen
+import com.biprangshu.xetiabondhu.appui.HistoryScreen
 import com.biprangshu.xetiabondhu.appui.HomeScreen
 import com.biprangshu.xetiabondhu.appui.LoadingScreen
 import com.biprangshu.xetiabondhu.appui.LoginScreen
 import com.biprangshu.xetiabondhu.appui.ResultScreen
+import com.biprangshu.xetiabondhu.appui.UserDetailScreen
 import com.biprangshu.xetiabondhu.authentication.AuthViewModel
 import com.biprangshu.xetiabondhu.datamodel.AnalysisState
 import com.biprangshu.xetiabondhu.datamodel.AuthState
@@ -171,6 +173,14 @@ fun Navigation(
                     downloadLink = analysisState.result.imageDownlaodUrl
                 )
             }
+        }
+
+        composable(NavigationScreens.HISTORYSCREEN) {
+            HistoryScreen()
+        }
+
+        composable(NavigationScreens.USERDETAILSCREEN) {
+            UserDetailScreen()
         }
     }
 }

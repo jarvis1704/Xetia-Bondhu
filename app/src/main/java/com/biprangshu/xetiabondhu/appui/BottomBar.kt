@@ -18,7 +18,10 @@ import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun BottomBar(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onHomeClick: () -> Unit,
+    onHistoryClick: () -> Unit,
+    onUserClick: ()-> Unit
 ) {
     BottomAppBar(
         modifier= modifier,
@@ -29,9 +32,7 @@ fun BottomBar(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(
-                    onClick = {
-                        //todo redirect to home
-                    }
+                    onClick = onHomeClick
                 ) {
                     Icon(
                         Icons.Default.Home,
@@ -39,9 +40,7 @@ fun BottomBar(
                     )
                 }
                 IconButton(
-                    onClick = {
-                        //todo redirect to history screen
-                    }
+                    onClick = onHistoryClick
                 ) {
                     Icon(
                         Icons.Default.Home,
@@ -49,9 +48,7 @@ fun BottomBar(
                     )
                 }
                 IconButton(
-                    onClick = {
-                        //todo redirect to user screen
-                    }
+                    onClick = onUserClick
                 ) {
                     Icon(
                         Icons.Default.Home,

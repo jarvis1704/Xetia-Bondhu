@@ -7,4 +7,6 @@ object NavigationScreens {
     const val LOADINGSCREEN = "loadingscreen"
     const val RESULTSCREEN = "resultscreen"
     const val ANALYSISLOADINGSCREEN = "analysisloadingscreen"
+    const val HISTORYSCREEN  = "historyscreen"
+    const val USERDETAILSCREEN = "userscreen"
 }
