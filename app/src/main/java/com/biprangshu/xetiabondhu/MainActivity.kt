@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
+import com.biprangshu.xetiabondhu.appui.BottomBar
 import com.biprangshu.xetiabondhu.navigation.Navigation
 import com.biprangshu.xetiabondhu.ui.theme.XetiaBondhuTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -26,7 +27,10 @@ class MainActivity : ComponentActivity() {
 
                 val navController = rememberNavController()
 
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    bottomBar = { BottomBar() }
+                ) { innerPadding ->
                     Navigation(
                         navcontroller = navController
                     )
