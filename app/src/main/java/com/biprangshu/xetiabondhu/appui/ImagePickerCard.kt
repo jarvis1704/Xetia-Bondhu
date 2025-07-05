@@ -17,6 +17,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.BrowseGallery
+import androidx.compose.material.icons.filled.Camera
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -169,7 +171,7 @@ fun ImagePickerBottomSheetContent(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                imageVector = Icons.Default.CheckCircle,
+                imageVector = Icons.Default.Camera,
                 contentDescription = "Camera",
                 modifier = Modifier.size(24.dp),
                 tint = MaterialTheme.colorScheme.primary
@@ -190,7 +192,7 @@ fun ImagePickerBottomSheetContent(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                imageVector = Icons.Default.CheckCircle,
+                imageVector = Icons.Default.BrowseGallery,
                 contentDescription = "Gallery",
                 modifier = Modifier.size(24.dp),
                 tint = MaterialTheme.colorScheme.primary
