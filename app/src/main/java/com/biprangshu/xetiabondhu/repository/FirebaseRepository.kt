@@ -115,8 +115,11 @@ class FirebaseRepository @Inject constructor(
 
             Log.d("Firebase Repository", "Received response from AI: $responseText")
 
+            //saving image to firebase storage
+            val downloadUrl = uploadImageToStorage(uri)
+
             //parsing to get structured data
-            val analysisResult = parseAiResponse(responseText)
+            val analysisResult = parseAiResponse(responseText, downloadUrl)
 
             //save history in firestore
             saveAnalysisHistory(user.uid, analysisResult)
@@ -140,7 +143,31 @@ class FirebaseRepository @Inject constructor(
         }
     }
 
-    private fun parseAiResponse(responseText: String): AnalysisResult {
+    suspend fun uploadImageToStorage(uri: Uri): String?{
+        val requestId = UUID.randomUUID()
+        val user = auth.currentUser
+        var downloadUrl: String? = null
+        user?.let {
+            val path = "uploads/${user.uid}/$requestId.jpg"
+
+            //uploading image to storage
+            val uploadTask = firebaseStorage.reference.child(path).putFile(uri).await()
+            Log.d("Firebase Repository", "Image Uploaded sucessfully")
+
+            //retrieving download link
+            if(uploadTask.task.isSuccessful){
+                downloadUrl = firebaseStorage.reference.child(path).downloadUrl.await()?.toString()
+                Log.d("Firebase Repository", "Download URL: $downloadUrl")
+            }else{
+                //task failed
+                Log.e("Firebase Repository", "Image upload failed: ${uploadTask.task.exception}")
+            }
+        }
+
+        return downloadUrl
+    }
+
+    private fun parseAiResponse(responseText: String, downloadUrl: String?): AnalysisResult {
         return try {
             var diseaseName = "Unknown"
             var description = ""
@@ -234,7 +261,8 @@ class FirebaseRepository @Inject constructor(
                 },
                 solution = cleanText(solution).ifEmpty {
                     "Apply general plant care practices and consult local agricultural extension services."
-                }
+                },
+                imageDownlaodUrl = downloadUrl
             )
 
         } catch (e: Exception) {
@@ -254,6 +282,7 @@ class FirebaseRepository @Inject constructor(
                 "diseaseName" to result.diseaseName,
                 "description" to result.description,
                 "solution" to result.solution,
+                "downloadLink" to result.imageDownlaodUrl,
                 "timestamp" to FieldValue.serverTimestamp()
             )
 
