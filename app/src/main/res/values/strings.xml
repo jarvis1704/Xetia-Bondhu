@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Xetia Bondhu</string>
     <string name="default_web_client_id">45560621282-s9j511csig5phkvaog2l0bsl7c4s9v14.apps.googleusercontent.com</string>
+    <string name="gemini_api_key">AIzaSyDBhfQrhPOAqwm7-cFW5MBuSCDMJ7t2vRU</string>
 </resources>
