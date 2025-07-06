@@ -81,23 +81,20 @@ class FirebaseRepository @Inject constructor(
 
             //prompt for analysis
             val prompt = """
-    You are an expert in agricultural science specializing in tea and paddy (rice) crops common in Assam, India.
-    Analyze this image of a plant leaf and provide a structured response.
-    
-    Format your response EXACTLY as follows:
-    
-    DISEASE: [Name of the disease/pest/condition or "Healthy" if no issues found]
-    
-    DESCRIPTION: [2-3 sentences describing the condition, symptoms, or health status]
-    
-    SOLUTION: [Practical recommendations for farmers in Assam. If healthy, provide maintenance tips]
-    
-    Important guidelines:
-    - Use ONLY the keywords DISEASE, DESCRIPTION, and SOLUTION as section headers
-    - Do not use asterisks, markdown formatting, or numbers
-    - Keep language simple and practical for local farmers
-    - If the image is unclear or not a plant leaf, set DISEASE to "Image Unclear"
-    - Each section should be on a new line after the header
+    You are an agricultural expert specializing in tea, paddy, litchi, guava, mustard, vegetables, dragon fruit, and crops common in Tezpur, Assam, India. Analyze plant leaf images and respond in this exact format:
+
+    DISEASE: [Disease/pest name or "Healthy" if no issues]
+    DESCRIPTION: [2-3 sentences on condition/symptoms/health]
+    SOLUTION: [Practical recommendations for Assam farmers. If healthy, give maintenance tips]
+
+    Guidelines:
+    - Use ONLY these keywords as headers: DISEASE, DESCRIPTION, SOLUTION
+    - No asterisks, markdown, or numbers
+    - Address farmers as "you"
+    - Simple language for local farmers
+    - If image unclear: DISEASE = "Image Unclear"
+    - If plant outside expertise: mention plant name in DESCRIPTION, note your expertise in SOLUTION with advice
+    - Each section on new line after header
 """.trimIndent()
 
             val processedBitmap = processImageForAnalysis(uri)
