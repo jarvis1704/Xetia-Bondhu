@@ -78,9 +78,7 @@ fun UserDetailScreen(modifier: Modifier = Modifier) {
                     tint = Color.White
                 )
             }
-
             Spacer(Modifier.height(24.dp))
-
             Text(
                 text = "Profile Information",
                 style = MaterialTheme.typography.headlineMedium,
@@ -88,9 +86,7 @@ fun UserDetailScreen(modifier: Modifier = Modifier) {
                 color = MaterialTheme.colorScheme.primary,
                 textAlign = TextAlign.Center
             )
-
             Spacer(Modifier.height(32.dp))
-
             UserInfoCard(
                 icon = Icons.Default.Person,
                 label = "Username",
@@ -98,9 +94,7 @@ fun UserDetailScreen(modifier: Modifier = Modifier) {
                 backgroundColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f),
                 iconColor = MaterialTheme.colorScheme.primary
             )
-
             Spacer(Modifier.height(16.dp))
-
             UserInfoCard(
                 icon = Icons.Default.Email,
                 label = "Email",
@@ -108,15 +102,19 @@ fun UserDetailScreen(modifier: Modifier = Modifier) {
                 backgroundColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.3f),
                 iconColor = MaterialTheme.colorScheme.secondary
             )
-
             Spacer(Modifier.height(16.dp))
-
             UserInfoCard(
                 icon = Icons.Default.Tag,
                 label = "User ID",
                 value = CurrentUserObject.userId ?: "Not available",
                 backgroundColor = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.3f),
                 iconColor = MaterialTheme.colorScheme.tertiary
+            )
+            Spacer(Modifier.height(16.dp))
+            Text(
+                text = "Made by Biprangshu Das",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Medium
             )
         }
     }
@@ -132,7 +130,6 @@ private fun UserInfoCard(
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(6.dp),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
             containerColor = backgroundColor
