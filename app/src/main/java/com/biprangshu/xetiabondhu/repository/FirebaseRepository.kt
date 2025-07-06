@@ -10,25 +10,21 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.core.graphics.decodeBitmap
 import com.biprangshu.xetiabondhu.appui.HistoryItem
 import com.biprangshu.xetiabondhu.datamodel.AnalysisResult
 import com.biprangshu.xetiabondhu.datamodel.UserData
-import com.google.firebase.Firebase
-import com.google.firebase.ai.ai
-import com.google.firebase.ai.type.Content
-import com.google.firebase.ai.type.GenerativeBackend
-import com.google.firebase.ai.type.content
-import com.google.firebase.ai.type.generationConfig
+import com.biprangshu.xetiabondhu.utils.apiKey
+import com.google.ai.client.generativeai.GenerativeModel
+import com.google.ai.client.generativeai.type.content
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.tasks.await
+import java.text.SimpleDateFormat
+import java.util.Locale
 import java.util.UUID
 import javax.inject.Inject
 
@@ -41,15 +37,20 @@ class FirebaseRepository @Inject constructor(
 
     private var _requestId by mutableStateOf<UUID?>(null)
 
-    val generativeModel = Firebase.ai(backend = GenerativeBackend.vertexAI()).generativeModel(
+//    val generativeModel = Firebase.ai(backend = GenerativeBackend.vertexAI()).generativeModel(
+//        modelName = "gemini-2.5-flash",
+////        generationConfig = generationConfig {
+////            temperature = 0.7f
+////            topK = 40
+////            topP = 0.95f
+////            maxOutputTokens = 1024
+////        }
+//        //todo: create a generation config for your model
+//    )
+
+    private val generativeModel = GenerativeModel(
         modelName = "gemini-2.5-flash",
-//        generationConfig = generationConfig {
-//            temperature = 0.7f
-//            topK = 40
-//            topP = 0.95f
-//            maxOutputTokens = 1024
-//        }
-        //todo: create a generation config for your model
+        apiKey = apiKey,
     )
 
 
@@ -326,7 +327,8 @@ class FirebaseRepository @Inject constructor(
                     val timestampString = if (timestamp != null) {
                         try {
                             val date = timestamp.toDate()
-                            val format = java.text.SimpleDateFormat("d MMMM yyyy 'at' HH:mm:ss z", java.util.Locale.ENGLISH)
+                            val format =
+                                SimpleDateFormat("d MMMM yyyy 'at' HH:mm:ss z", Locale.ENGLISH)
                             format.format(date)
                         } catch (e: Exception) {
                             Log.e("Firebase Repository", "Error formatting timestamp", e)

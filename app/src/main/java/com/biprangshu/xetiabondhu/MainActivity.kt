@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -19,6 +20,7 @@ import com.biprangshu.xetiabondhu.appui.BottomBar
 import com.biprangshu.xetiabondhu.navigation.Navigation
 import com.biprangshu.xetiabondhu.navigation.NavigationScreens
 import com.biprangshu.xetiabondhu.ui.theme.XetiaBondhuTheme
+import com.biprangshu.xetiabondhu.utils.apiKey
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -30,6 +32,7 @@ class MainActivity : ComponentActivity() {
             XetiaBondhuTheme {
 
                 val navController = rememberNavController()
+                apiKey = stringResource(R.string.gemini_api_key)
 
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
