@@ -10,14 +10,18 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
@@ -92,7 +96,9 @@ fun ChatScreen(
     Surface(
         modifier = Modifier
             .fillMaxSize()
-            .navigationBarsPadding(),
+            .windowInsetsPadding(WindowInsets.displayCutout)
+            .statusBarsPadding()
+            .padding(bottom= 100.dp),
         color = MaterialTheme.colorScheme.background
     ) {
         Column(
@@ -184,7 +190,7 @@ fun ChatScreen(
                         onValueChange = { messageText = it },
                         placeholder = {
                             Text(
-                                "Type a message...",
+                                "Ask Xetia Bondhu AI ...",
                                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                                 style = MaterialTheme.typography.headlineMedium,
                                 fontSize = 14.sp

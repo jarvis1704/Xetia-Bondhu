@@ -8,9 +8,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.filled.ChatBubble
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.outlined.ChatBubble
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.Person
@@ -34,7 +37,8 @@ fun BottomBar(
     modifier: Modifier = Modifier,
     onHomeClick: () -> Unit,
     onHistoryClick: () -> Unit,
-    onUserClick: () -> Unit
+    onUserClick: () -> Unit,
+    onChatClick: ()-> Unit
 ) {
     BottomAppBar(
         modifier = modifier,
@@ -68,6 +72,39 @@ fun BottomBar(
                             text = "Home",
                             fontSize = 12.sp,
                             fontWeight = if (selectedScreen == NavigationScreens.HOMESCREEN) {
+                                FontWeight.Medium
+                            } else {
+                                FontWeight.Normal
+                            }
+                        )
+                    },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                        selectedTextColor = MaterialTheme.colorScheme.onSurface,
+                        indicatorColor = MaterialTheme.colorScheme.secondaryContainer,
+                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                )
+                NavigationBarItem(
+                    selected = selectedScreen == NavigationScreens.CHATSCREEN,
+                    onClick = onChatClick,
+                    icon = {
+                        Icon(
+                            imageVector = if (selectedScreen == NavigationScreens.CHATSCREEN) {
+                                Icons.Filled.ChatBubble
+                            } else {
+                                Icons.Outlined.ChatBubble
+                            },
+                            contentDescription = "Home",
+                            modifier = Modifier.size(24.dp)
+                        )
+                    },
+                    label = {
+                        Text(
+                            text = "Chat",
+                            fontSize = 12.sp,
+                            fontWeight = if (selectedScreen == NavigationScreens.CHATSCREEN) {
                                 FontWeight.Medium
                             } else {
                                 FontWeight.Normal

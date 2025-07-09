@@ -119,9 +119,6 @@ fun Navigation(
                 },
                 onSubmitClick = { uri ->
                     appViewmodel.analysisImage(uri)
-                },
-                onChatClick = {
-                    navcontroller.navigate(NavigationScreens.CHATSCREEN)
                 }
             )
         }
@@ -215,6 +212,7 @@ fun Navigation(
         }
 
         composable(NavigationScreens.CHATSCREEN) {
+            selectedScreen = NavigationScreens.CHATSCREEN
             ChatScreen(
                 userId = CurrentUserObject.userId ?: "Current user"
             )

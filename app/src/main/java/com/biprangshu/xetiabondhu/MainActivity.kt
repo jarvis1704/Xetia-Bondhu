@@ -44,7 +44,8 @@ class MainActivity : ComponentActivity() {
                         val bottomBarVisibleRoutes = listOf(
                             NavigationScreens.HOMESCREEN,
                             NavigationScreens.HISTORYSCREEN,
-                            NavigationScreens.USERDETAILSCREEN
+                            NavigationScreens.USERDETAILSCREEN,
+                            NavigationScreens.CHATSCREEN
                         )
 
                         if(currentDestination?.route in bottomBarVisibleRoutes){
@@ -69,6 +70,15 @@ class MainActivity : ComponentActivity() {
                                 },
                                 onUserClick = {
                                     navController.navigate(NavigationScreens.USERDETAILSCREEN) {
+                                        popUpTo(navController.graph.findStartDestination().id) {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                        restoreState = true
+                                    }
+                                },
+                                onChatClick = {
+                                    navController.navigate(NavigationScreens.CHATSCREEN){
                                         popUpTo(navController.graph.findStartDestination().id) {
                                             saveState = true
                                         }
