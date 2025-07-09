@@ -7,17 +7,16 @@ import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import com.biprangshu.xetiabondhu.appui.HistoryItem
 import com.biprangshu.xetiabondhu.datamodel.AnalysisResult
+import com.biprangshu.xetiabondhu.datamodel.MessageModel
 import com.biprangshu.xetiabondhu.datamodel.UserData
 import com.biprangshu.xetiabondhu.utils.apiKey
 import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.content
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
@@ -35,7 +34,7 @@ class FirebaseRepository @Inject constructor(
     private val context: Context
 ){
 
-    private var _requestId by mutableStateOf<UUID?>(null)
+    private var realtimeDatabase  = FirebaseDatabase.getInstance()
 
 //    val generativeModel = Firebase.ai(backend = GenerativeBackend.vertexAI()).generativeModel(
 //        modelName = "gemini-2.5-flash",
@@ -355,6 +354,68 @@ class FirebaseRepository @Inject constructor(
             emptyList()
         }
     }
+
+    //functions for aichatbot
+
+    //function to create message to AI
+    suspend fun sendMessageToAi(userMessage: String){
+        val currentUser = auth.currentUser ?: throw IllegalStateException("Not Signed In")
+
+        Log.d("Firebase Repository", "Sending user message to realtime db")
+        //send user message to realtime db
+        sendAiMessage(message = userMessage, senderId = currentUser.uid){
+            success->
+            //handle on success
+        }
+
+        //write prompt to ai to generate response
+        val prompt = """
+    You are an agricultural expert named Xetia Bondhu AI specializing in tea, paddy, litchi, guava, mustard, vegetables, dragon fruit, and crops common in Tezpur, Assam, India. Answer the question asked by the farmer:
+    $userMessage
+    
+    Guidelines:
+    - Be friendly to the farmer.
+    - No asterisks, markdown
+    - Address farmers as "you"
+    - Simple language for local farmers
+    - Each section on new line after header
+""".trimIndent()
+
+        Log.d("Firebase Repository", "Sending prompt to AI")
+
+        val response  = generativeModel.generateContent(prompt)
+
+        val responseText = response.text ?: throw Exception("Empty response from AI")
+
+        Log.d("Firebase Repository", "Received response from AI: $responseText, sending it to realtime db")
+
+        //sending Ai message to realtime db
+        sendAiMessage(message = responseText, senderId = "AI Response"){
+            success->
+            //handle on success
+        }
+    }
+
+    //message sending function to realtime database
+    fun sendAiMessage(message: String, senderId: String, onComplete: (Boolean)-> Unit){
+        val currentUser  = auth.currentUser?: return
+        val chatId = currentUser.uid
+        val messageRef = realtimeDatabase.getReference("chats/$chatId/messages")
+
+        val messageId = messageRef.push().key ?: return
+
+        val messageModel = MessageModel(
+            message = message,
+            messageId = messageId,
+            timestamp = System.currentTimeMillis(),
+            senderId = senderId
+        )
+
+        messageRef.child(messageId).setValue(messageModel)
+            .addOnSuccessListener { onComplete(true) }
+            .addOnFailureListener { onComplete(false) }
+    }
+
 
     //helper functions to parse text
     private fun cleanText(text: String): String {
