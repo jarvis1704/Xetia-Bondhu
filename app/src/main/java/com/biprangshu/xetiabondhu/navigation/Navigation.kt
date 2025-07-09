@@ -19,6 +19,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.biprangshu.xetiabondhu.AppViewmodel
 import com.biprangshu.xetiabondhu.appui.AnalysisLoadingScreen
+import com.biprangshu.xetiabondhu.appui.ChatScreen
 import com.biprangshu.xetiabondhu.appui.HistoryItem
 import com.biprangshu.xetiabondhu.appui.HistoryScreen
 import com.biprangshu.xetiabondhu.appui.HomeScreen
@@ -29,6 +30,7 @@ import com.biprangshu.xetiabondhu.appui.UserDetailScreen
 import com.biprangshu.xetiabondhu.authentication.AuthViewModel
 import com.biprangshu.xetiabondhu.datamodel.AnalysisState
 import com.biprangshu.xetiabondhu.datamodel.AuthState
+import com.biprangshu.xetiabondhu.utils.CurrentUserObject
 import com.biprangshu.xetiabondhu.utils.selectedScreen
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -118,6 +120,9 @@ fun Navigation(
                 onSubmitClick = { uri ->
                     appViewmodel.analysisImage(uri)
                 },
+                onChatClick = {
+                    navcontroller.navigate(NavigationScreens.CHATSCREEN)
+                }
             )
         }
 
@@ -207,6 +212,12 @@ fun Navigation(
         composable(NavigationScreens.USERDETAILSCREEN) {
             selectedScreen = NavigationScreens.USERDETAILSCREEN
             UserDetailScreen()
+        }
+
+        composable(NavigationScreens.CHATSCREEN) {
+            ChatScreen(
+                userId = CurrentUserObject.userId ?: "Current user"
+            )
         }
     }
 }

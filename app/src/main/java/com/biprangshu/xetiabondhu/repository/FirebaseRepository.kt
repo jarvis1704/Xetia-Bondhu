@@ -383,7 +383,11 @@ class FirebaseRepository @Inject constructor(
 
         Log.d("Firebase Repository", "Sending prompt to AI")
 
-        val response  = generativeModel.generateContent(prompt)
+        val inputContext = content {
+            text(prompt)
+        }
+
+        val response  = generativeModel.generateContent(inputContext)
 
         val responseText = response.text ?: throw Exception("Empty response from AI")
 

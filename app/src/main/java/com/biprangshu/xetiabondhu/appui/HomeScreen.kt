@@ -49,6 +49,7 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     onSignoutClick: ()-> Unit,
     onSubmitClick: (Uri) -> Unit,
+    onChatClick: ()-> Unit
 ) {
 
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
@@ -197,6 +198,13 @@ fun HomeScreen(
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium
                 )
+            }
+
+            //for temp testing
+            Button(
+                onClick = onChatClick
+            ) {
+                Text("Go to chat Screen")
             }
         }
     }
