@@ -5,3 +5,5 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 
 var apiKey by mutableStateOf("")
+
+var selectedScreen by mutableStateOf("")

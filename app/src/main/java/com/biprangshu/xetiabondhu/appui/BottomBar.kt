@@ -1,122 +1,155 @@
 package com.biprangshu.xetiabondhu.appui
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.History
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.biprangshu.xetiabondhu.navigation.NavigationScreens
+import com.biprangshu.xetiabondhu.utils.selectedScreen
 
 @Composable
 fun BottomBar(
     modifier: Modifier = Modifier,
     onHomeClick: () -> Unit,
     onHistoryClick: () -> Unit,
-    onUserClick: ()-> Unit
+    onUserClick: () -> Unit
 ) {
     BottomAppBar(
         modifier = modifier,
         containerColor = MaterialTheme.colorScheme.surface,
         contentColor = MaterialTheme.colorScheme.onSurface,
-        tonalElevation = 8.dp,
+        tonalElevation = 3.dp,
         actions = {
             Row(
-                modifier = modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .selectableGroup(),
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    IconButton(
-                        onClick = onHomeClick,
-                        modifier = Modifier
-                            .size(48.dp)
-                            .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.1f))
-                    ) {
+                NavigationBarItem(
+                    selected = selectedScreen == NavigationScreens.HOMESCREEN,
+                    onClick = onHomeClick,
+                    icon = {
                         Icon(
-                            Icons.Default.Home,
+                            imageVector = if (selectedScreen == NavigationScreens.HOMESCREEN) {
+                                Icons.Filled.Home
+                            } else {
+                                Icons.Outlined.Home
+                            },
                             contentDescription = "Home",
-                            tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(24.dp)
                         )
-                    }
-                    Text(
-                        text = "Home",
-                        fontSize = 14.sp
+                    },
+                    label = {
+                        Text(
+                            text = "Home",
+                            fontSize = 12.sp,
+                            fontWeight = if (selectedScreen == NavigationScreens.HOMESCREEN) {
+                                FontWeight.Medium
+                            } else {
+                                FontWeight.Normal
+                            }
+                        )
+                    },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                        selectedTextColor = MaterialTheme.colorScheme.onSurface,
+                        indicatorColor = MaterialTheme.colorScheme.secondaryContainer,
+                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                }
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    IconButton(
-                        onClick = onHistoryClick,
-                        modifier = Modifier
-                            .size(48.dp)
-                            .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.1f))
-                    ) {
+                )
+
+                NavigationBarItem(
+                    selected = selectedScreen == NavigationScreens.HISTORYSCREEN,
+                    onClick = onHistoryClick,
+                    icon = {
                         Icon(
-                            Icons.Default.History,
+                            imageVector = if (selectedScreen == NavigationScreens.HISTORYSCREEN) {
+                                Icons.Filled.History
+                            } else {
+                                Icons.Outlined.History
+                            },
                             contentDescription = "History",
-                            tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(24.dp)
                         )
-                    }
-                    Text(
-                        text = "History",
-                        fontSize = 14.sp
+                    },
+                    label = {
+                        Text(
+                            text = "History",
+                            fontSize = 12.sp,
+                            fontWeight = if (selectedScreen == NavigationScreens.HISTORYSCREEN) {
+                                FontWeight.Medium
+                            } else {
+                                FontWeight.Normal
+                            }
+                        )
+                    },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                        selectedTextColor = MaterialTheme.colorScheme.onSurface,
+                        indicatorColor = MaterialTheme.colorScheme.secondaryContainer,
+                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                }
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    IconButton(
-                        onClick = onUserClick,
-                        modifier = Modifier
-                            .size(48.dp)
-                            .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.1f))
-                    ) {
+                )
+
+                NavigationBarItem(
+                    selected = selectedScreen == NavigationScreens.USERDETAILSCREEN,
+                    onClick = onUserClick,
+                    icon = {
                         Icon(
-                            Icons.Default.Person,
-                            contentDescription = "User",
-                            tint = MaterialTheme.colorScheme.primary,
+                            imageVector = if (selectedScreen == NavigationScreens.USERDETAILSCREEN) {
+                                Icons.Filled.Person
+                            } else {
+                                Icons.Outlined.Person
+                            },
+                            contentDescription = "Profile",
                             modifier = Modifier.size(24.dp)
                         )
-                    }
-                    Text(
-                        text = "Profile",
-                        fontSize = 14.sp
+                    },
+                    label = {
+                        Text(
+                            text = "Profile",
+                            fontSize = 12.sp,
+                            fontWeight = if (selectedScreen == NavigationScreens.USERDETAILSCREEN) {
+                                FontWeight.Medium
+                            } else {
+                                FontWeight.Normal
+                            }
+                        )
+                    },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                        selectedTextColor = MaterialTheme.colorScheme.onSurface,
+                        indicatorColor = MaterialTheme.colorScheme.secondaryContainer,
+                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                }
-
-
-
+                )
             }
         }
     )

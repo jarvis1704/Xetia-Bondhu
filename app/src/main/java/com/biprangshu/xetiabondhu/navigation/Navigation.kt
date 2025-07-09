@@ -29,6 +29,7 @@ import com.biprangshu.xetiabondhu.appui.UserDetailScreen
 import com.biprangshu.xetiabondhu.authentication.AuthViewModel
 import com.biprangshu.xetiabondhu.datamodel.AnalysisState
 import com.biprangshu.xetiabondhu.datamodel.AuthState
+import com.biprangshu.xetiabondhu.utils.selectedScreen
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -109,6 +110,7 @@ fun Navigation(
         startDestination = NavigationScreens.LOADINGSCREEN
     ) {
         composable(NavigationScreens.HOMESCREEN) {
+            selectedScreen = NavigationScreens.HOMESCREEN
             HomeScreen(
                 onSignoutClick = {
                     authViewModel.signOut()
@@ -177,6 +179,7 @@ fun Navigation(
         }
 
         composable(NavigationScreens.HISTORYSCREEN) {
+            selectedScreen = NavigationScreens.HISTORYSCREEN
             val historyItems = appViewmodel.analysisHistory.collectAsState().value
             val isLoading = appViewmodel.isHistoryLoading.collectAsState().value
 
@@ -202,6 +205,7 @@ fun Navigation(
         }
 
         composable(NavigationScreens.USERDETAILSCREEN) {
+            selectedScreen = NavigationScreens.USERDETAILSCREEN
             UserDetailScreen()
         }
     }
