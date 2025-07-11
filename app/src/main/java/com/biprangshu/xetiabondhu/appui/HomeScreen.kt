@@ -1,6 +1,7 @@
 package com.biprangshu.xetiabondhu.appui
 
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,7 +15,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material3.Button
@@ -38,6 +42,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -47,12 +52,13 @@ import coil.compose.AsyncImage
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    onSignoutClick: ()-> Unit,
     onSubmitClick: (Uri) -> Unit
 ) {
 
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
     var isSubmitButtonActive by remember{ mutableStateOf(false)}
+
+
 
     Box(
         modifier = modifier
@@ -81,24 +87,12 @@ fun HomeScreen(
                 color = MaterialTheme.colorScheme.primary
             )
 
-            IconButton(
-                onClick = onSignoutClick,
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.1f))
-            ) {
-                Icon(
-                    Icons.Default.ExitToApp,
-                    contentDescription = "Sign out",
-                    tint = MaterialTheme.colorScheme.error
-                )
-            }
         }
 
         Column (
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())
                 .padding(16.dp)
                 .padding(top = 60.dp),
             verticalArrangement = Arrangement.Center,

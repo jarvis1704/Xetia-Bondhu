@@ -10,6 +10,7 @@ import com.biprangshu.xetiabondhu.datamodel.AuthState
 import com.biprangshu.xetiabondhu.datamodel.UpdateState
 import com.biprangshu.xetiabondhu.repository.FirebaseRepository
 import com.biprangshu.xetiabondhu.repository.UserPreferencesRepository
+import com.biprangshu.xetiabondhu.utils.CurrentUserObject
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -99,6 +100,11 @@ class AuthViewModel @Inject constructor(
                         userName = result.data.userName ?: "",
                         userEmail = currentUser?.email ?: ""
                     )
+
+                    //updating current user object instantly
+                    CurrentUserObject.userId = userPreferencesRepository.userId.first()
+                    CurrentUserObject.username = userPreferencesRepository.userName.first()
+                    CurrentUserObject.useremail = userPreferencesRepository.userEmail.first()
 
                     //todo save user to firestore
                     currentUser?.let {

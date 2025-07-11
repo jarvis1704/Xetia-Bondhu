@@ -1,6 +1,7 @@
 package com.biprangshu.xetiabondhu
 
 import android.app.Application
+import androidx.annotation.Keep
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.biprangshu.xetiabondhu.datamodel.MessageModel
@@ -40,6 +41,7 @@ class ChatViewModel @Inject constructor(
         }
     }
 
+    @Keep
     fun loadMessages(){
         val currentUser = auth.currentUser?: return
 

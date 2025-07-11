@@ -114,9 +114,6 @@ fun Navigation(
         composable(NavigationScreens.HOMESCREEN) {
             selectedScreen = NavigationScreens.HOMESCREEN
             HomeScreen(
-                onSignoutClick = {
-                    authViewModel.signOut()
-                },
                 onSubmitClick = { uri ->
                     appViewmodel.analysisImage(uri)
                 }
@@ -208,7 +205,11 @@ fun Navigation(
 
         composable(NavigationScreens.USERDETAILSCREEN) {
             selectedScreen = NavigationScreens.USERDETAILSCREEN
-            UserDetailScreen()
+            UserDetailScreen(
+                onSignoutClick = {
+                    authViewModel.signOut()
+                }
+            )
         }
 
         composable(NavigationScreens.CHATSCREEN) {

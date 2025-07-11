@@ -1,5 +1,7 @@
 package com.biprangshu.xetiabondhu.appui
 
+import android.R
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,16 +13,21 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Tag
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,7 +44,10 @@ import androidx.compose.ui.unit.sp
 import com.biprangshu.xetiabondhu.utils.CurrentUserObject
 
 @Composable
-fun UserDetailScreen(modifier: Modifier = Modifier) {
+fun UserDetailScreen(
+    modifier: Modifier = Modifier,
+    onSignoutClick: ()-> Unit
+) {
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -110,6 +120,30 @@ fun UserDetailScreen(modifier: Modifier = Modifier) {
                 backgroundColor = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.3f),
                 iconColor = MaterialTheme.colorScheme.tertiary
             )
+            Spacer(Modifier.height(16.dp))
+            Button(
+                onClick = {
+                    Log.d("User Detail Screen", "Signout button clicked")
+                    onSignoutClick()
+                },
+                modifier = Modifier.clip(RoundedCornerShape(12.dp)),
+                colors = ButtonDefaults.buttonColors(
+                    MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.1f)
+                )
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        Icons.Default.ExitToApp,
+                        contentDescription = "Sign out",
+                        tint = MaterialTheme.colorScheme.error
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text("Sign Out", color = MaterialTheme.colorScheme.error)
+                }
+            }
             Spacer(Modifier.height(16.dp))
             Text(
                 text = "Made by Biprangshu Das",

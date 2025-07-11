@@ -98,7 +98,7 @@ fun ChatScreen(
             .fillMaxSize()
             .windowInsetsPadding(WindowInsets.displayCutout)
             .statusBarsPadding()
-            .padding(bottom= 100.dp),
+            .padding(bottom= 120.dp),
         color = MaterialTheme.colorScheme.background
     ) {
         Column(
